@@ -1,0 +1,32 @@
+- name: Install AWS CLI and Docker, and copy directory to EC2
+  hosts: ec2_instances
+  become: true
+
+  tasks:
+    - name: Update package indexes
+      apt:
+        update_cache: yes
+
+    # - name: Install AWS CLI
+    #   become: true
+    #   apt:
+    #     name: awscli
+    #     state: present
+
+    - name: Install Docker
+      become: true
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Copy directory to EC2
+      become: true
+      copy:
+        src: /home/amr/Documents/EKS-PROJECT/jenkins
+        dest: /home/ubuntu
+        
+    - name: Copy key to EC2
+      become: true
+      copy:
+        src: /home/amr/Documents/EKS-PROJECT/ansible/key.pem
+        dest: /home/ubuntu

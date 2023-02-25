@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('CI') {
+            steps {
+                git ' https://github.com/AmrGomaa96/final/tree/main/final-pro'
+                withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                sh """
+                docker login -u ${USERNAME} -p ${PASSWORD}
+                cd DevOps-Challenge-Demo-Code-master
+                docker build -f Dockerfile -t amr966/app:v1 .
+                docker push amr966/app:v1
+                """
+            
+            }
+            }
+            
+        }
+        stage('CD'){
+            steps{
+                     withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                sh """
+                docker login -u ${USERNAME} -p ${PASSWORD}
+                cd kubernetes-files/
+                kubectl create namespace app
+                kubectl apply -f deployment-redis.yml
+                kubectl apply -f redis-service.yml
+                kubectl apply -f app-deployment.yml
+                kubectl apply -f lb.yml
+
+                """
+                     }
+            }
+        }
+        
+    }
+}
+kubernetes-files
