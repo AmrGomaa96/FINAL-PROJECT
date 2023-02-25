@@ -1,4 +1,4 @@
-- name: Install AWS CLI and Docker, and copy directory to EC2
+- name: Install AWS CLI and Docker, and copy Jenkins Files & key to ssh 
   hosts: ec2_instances
   become: true
 
